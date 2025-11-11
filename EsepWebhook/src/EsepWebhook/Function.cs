@@ -1,7 +1,6 @@
 using System.Text;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json;
-using System.Net.Http;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -10,6 +9,7 @@ namespace EsepWebhook;
 
 public class Function
 {
+    
     /// <summary>
     /// A simple function that takes a string and does a ToUpper
     /// </summary>
@@ -19,8 +19,9 @@ public class Function
     public string FunctionHandler(object input, ILambdaContext context)
     {
         context.Logger.LogInformation($"FunctionHandler received: {input}");
+
         dynamic json = JsonConvert.DeserializeObject<dynamic>(input.ToString());
-        
+
         // Testing from postman, you can use this code to test the function
         /*
         context.Logger.LogInformation($"Body: {json.body}");
@@ -31,6 +32,7 @@ public class Function
         */
         
         string payload = $"{{'text':'Issue Created: {json.issue.html_url}'}}";
+
         var client = new HttpClient();
         var webRequest = new HttpRequestMessage(HttpMethod.Post, Environment.GetEnvironmentVariable("SLACK_URL"))
         {
